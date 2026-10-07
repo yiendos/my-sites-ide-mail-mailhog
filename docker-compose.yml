@@ -1,0 +1,18 @@
+services:
+    mailhog:
+        container_name: "mailhog"
+        image: ${NAMESPACE}_mailhog:latest
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            # the web UI and API - http://localhost:8025
+            - "${MAILHOG_UI_PORT:-8025}:8025"
+            # SMTP is published too, so a minikube deployment can send to it from outside the
+            # my-sites-ide network; containers on the network use mailhog:1025
+            - "${MAILHOG_SMTP_PORT:-1025}:1025"
+        networks:
+            - my-sites-ide
+
+    # started by `ide:spark` alongside APP (autostart: true in composer.json)
+    # sites send mail to it with MAIL_HOST=mailhog MAIL_PORT=1025 - nothing ever leaves the machine
