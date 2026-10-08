@@ -1,13 +1,13 @@
 <?php
 
-namespace Yiendos\MySitesIde\Servers\Mailhog\Console;
+namespace Yiendos\MySitesIde\Mail\Mailhog\Console;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiendos\MySitesIde\Servers\Mailhog\Traits\InteractsWithMailhog;
+use Yiendos\MySitesIde\Mail\Mailhog\Traits\InteractsWithMailhog;
 
 class MailhogMessagesCommand extends Command
 {
@@ -21,7 +21,7 @@ class MailhogMessagesCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('servers:mailhog-messages')
+            ->setName('mail:mailhog-messages')
             ->setDescription('List the emails MailHog has caught, newest first')
             ->addOption('limit', null, InputOption::VALUE_REQUIRED, 'How many to show', '10')
         ;
@@ -41,7 +41,7 @@ class MailhogMessagesCommand extends Command
         $messages = $this->mailhogApi('GET', "/api/v2/messages?limit={$limit}");
 
         if ($messages === null) {
-            $io->error("Can't reach MailHog at {$this->mailhogUrl()} - start it with servers:mailhog-start.");
+            $io->error("Can't reach MailHog at {$this->mailhogUrl()} - start it with mail:mailhog-start.");
             return Command::FAILURE;
         }
 

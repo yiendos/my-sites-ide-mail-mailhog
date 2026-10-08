@@ -1,12 +1,12 @@
 <?php
 
-namespace Yiendos\MySitesIde\Servers\Mailhog\Console;
+namespace Yiendos\MySitesIde\Mail\Mailhog\Console;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiendos\MySitesIde\Servers\Mailhog\Traits\InteractsWithMailhog;
+use Yiendos\MySitesIde\Mail\Mailhog\Traits\InteractsWithMailhog;
 
 class MailhogClearCommand extends Command
 {
@@ -20,7 +20,7 @@ class MailhogClearCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('servers:mailhog-clear')
+            ->setName('mail:mailhog-clear')
             ->setDescription('Delete every email MailHog has caught')
         ;
     }
@@ -36,7 +36,7 @@ class MailhogClearCommand extends Command
     public function __invoke(OutputInterface $output, InputInterface $input, SymfonyStyle $io): int
     {
         if ($this->mailhogApi('DELETE', '/api/v1/messages') === null) {
-            $io->error("Can't reach MailHog at {$this->mailhogUrl()} - start it with servers:mailhog-start.");
+            $io->error("Can't reach MailHog at {$this->mailhogUrl()} - start it with mail:mailhog-start.");
             return Command::FAILURE;
         }
 

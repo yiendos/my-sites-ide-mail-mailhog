@@ -25,7 +25,7 @@ A [my-sites-ide](https://github.com/yiendos/my-sites-ide) plugin. Add it to the 
 (the IDE's `composer.local-example.json` already lists it):
 
 ```json
-"yiendos/my-sites-ide-servers-mailhog": "@dev"
+"yiendos/my-sites-ide-mail-mailhog": "@dev"
 ```
 
 Then, from the IDE root:
@@ -35,7 +35,7 @@ composer update
 php my-sites-ide ide:build      # builds the ${NAMESPACE}_mailhog image, then sparks the IDE
 ```
 
-Composer's `post-autoload-dump` hook registers the `servers:mailhog-*` commands and the `mailhog`
+Composer's `post-autoload-dump` hook registers the `mail:mailhog-*` commands and the `mailhog`
 compose service. The service has `autostart: true`, so `ide:spark` starts it alongside `APP` - you
 don't need to list `mailhog` in `APP`.
 
@@ -55,20 +55,28 @@ working. The parts that moved:
 Recreate the container once from the plugin's compose file (this empties the inbox):
 
 ```
-php my-sites-ide servers:mailhog-start
+php my-sites-ide mail:mailhog-start
 ```
 
 Your existing `.env` can keep `mailhog` in `APP` while the plugin is installed - it's
 de-duplicated. Remove it if you uninstall the plugin, or `ide:spark` will ask compose for a service
 that no longer exists.
 
+### From `yiendos/my-sites-ide-servers-mailhog`
+
+The plugin was first published under the `servers` category. MailHog catches mail and doesn't serve
+sites, so it now sits under `mail`. In `composer.local.json`, swap
+`yiendos/my-sites-ide-servers-mailhog` for `yiendos/my-sites-ide-mail-mailhog`, then run
+`composer update`. The commands are now `mail:mailhog-*` instead of `servers:mailhog-*`. The
+container, image and ports haven't changed.
+
 ## Architecture
 
 ```
 host (my-sites-ide CLI)
   |- ide:spark / ide:restart           --> docker compose up / restart (mailhog included)
-  |- servers:mailhog-start / -stop     --> docker compose up -d / stop mailhog
-  |- servers:mailhog-messages / -clear --> MailHog's HTTP API on http://localhost:8025
+  |- mail:mailhog-start / -stop     --> docker compose up -d / stop mailhog
+  |- mail:mailhog-messages / -clear --> MailHog's HTTP API on http://localhost:8025
 
 site (fpm, cron, cli containers) --SMTP mailhog:1025--> mailhog container --> kept in memory
 browser --http://localhost:8025--> mailhog web UI
@@ -89,7 +97,7 @@ MAIL_PORT=1025
 MAIL_ENCRYPTION=null
 ```
 
-No username or password - MailHog accepts anything. `servers:mailhog-start` prints these lines.
+No username or password - MailHog accepts anything. `mail:mailhog-start` prints these lines.
 
 The SMTP port is also published on the host (1025), so something outside the `my-sites-ide`
 network - a minikube deployment, a script on your Mac - can send to `localhost:1025`.
@@ -98,10 +106,10 @@ network - a minikube deployment, a script on your Mac - can send to `localhost:1
 
 | Command | What it does |
 |---|---|
-| `servers:mailhog-start` | `docker compose up -d mailhog`, then prints the UI address and the `MAIL_*` settings. Also recreates a running container whose compose config has changed (e.g. new ports) |
-| `servers:mailhog-stop` | `docker compose stop mailhog`, leaving the rest of the IDE running. The next `ide:spark` starts it again |
-| `servers:mailhog-messages [--limit=10]` | List caught mail, newest first: received, from, to, subject |
-| `servers:mailhog-clear` | Delete every caught email - handy before a test run |
+| `mail:mailhog-start` | `docker compose up -d mailhog`, then prints the UI address and the `MAIL_*` settings. Also recreates a running container whose compose config has changed (e.g. new ports) |
+| `mail:mailhog-stop` | `docker compose stop mailhog`, leaving the rest of the IDE running. The next `ide:spark` starts it again |
+| `mail:mailhog-messages [--limit=10]` | List caught mail, newest first: received, from, to, subject |
+| `mail:mailhog-clear` | Delete every caught email - handy before a test run |
 
 `-messages` and `-clear` talk to MailHog's API from the host, on `MAILHOG_UI_PORT`.
 
@@ -113,8 +121,8 @@ network - a minikube deployment, a script on your Mac - can send to `localhost:1
 | `MAILHOG_SMTP_PORT` | `1025` (this plugin's `.env`) | The host port for SMTP. Containers on the IDE network always use `mailhog:1025`, whatever this is |
 
 Set either in the IDE's root `.env`, which wins over the plugin's defaults, then run
-`servers:mailhog-start` to recreate the container.
-`php my-sites-ide ide:plugin-env yiendos/my-sites-ide-servers-mailhog` copies them in, commented out.
+`mail:mailhog-start` to recreate the container.
+`php my-sites-ide ide:plugin-env yiendos/my-sites-ide-mail-mailhog` copies them in, commented out.
 
 ## What it uses from the IDE
 
@@ -132,10 +140,10 @@ site isn't using the `log` or `array` mailer. Laravel caches config, so run
 `php artisan config:clear` after changing `.env`.
 
 **`Connection refused` / `getaddrinfo for mailhog failed`.** MailHog isn't running:
-`php my-sites-ide servers:mailhog-start`.
+`php my-sites-ide mail:mailhog-start`.
 
 **`Can't reach MailHog at http://localhost:8025`.** The container is stopped, or `MAILHOG_UI_PORT`
-changed without recreating it - run `servers:mailhog-start`.
+changed without recreating it - run `mail:mailhog-start`.
 
 **The inbox emptied.** MailHog keeps mail in memory, so any stop, restart or recreate clears it.
 
