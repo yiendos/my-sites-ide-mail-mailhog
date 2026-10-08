@@ -1,5 +1,5 @@
 {
-    "name": "yiendos/my-sites-ide-servers-mailhog",
+    "name": "yiendos/my-sites-ide-mail-mailhog",
     "description": "MailHog mail catcher - an SMTP server that keeps every email your sites send, with a web UI to read them - for my-sites-ide",
     "type": "my-sites-ide-plugin",
     "license": "MIT",
@@ -12,7 +12,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Yiendos\\MySitesIde\\Servers\\Mailhog\\": "src/"
+            "Yiendos\\MySitesIde\\Mail\\Mailhog\\": "src/"
         }
     },
     "require": {

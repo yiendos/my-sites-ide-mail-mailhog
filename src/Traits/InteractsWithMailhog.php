@@ -1,6 +1,6 @@
 <?php
 
-namespace Yiendos\MySitesIde\Servers\Mailhog\Traits;
+namespace Yiendos\MySitesIde\Mail\Mailhog\Traits;
 
 use Symfony\Component\Console\Output\OutputInterface;
 

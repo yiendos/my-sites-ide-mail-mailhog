@@ -1,13 +1,13 @@
 <?php
 
-namespace Yiendos\MySitesIde\Servers\Mailhog\Console;
+namespace Yiendos\MySitesIde\Mail\Mailhog\Console;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Yiendos\MySitesIde\Servers\Mailhog\Traits\InteractsWithMailhog;
+use Yiendos\MySitesIde\Mail\Mailhog\Traits\InteractsWithMailhog;
 
 class MailhogMessagesCommand extends Command
 {
