@@ -2,6 +2,6 @@
 # The host ports MailHog publishes, defaults live in this plugin's .env - the web UI
 # (http://localhost:8025) and SMTP (1025, for senders outside the my-sites-ide network,
 # e.g. minikube). Sites in the IDE always use mailhog:1025, whatever these are set to.
-# Run `php my-sites-ide servers:mailhog-start` after changing either.
+# Run `php my-sites-ide mail:mailhog-start` after changing either.
 #MAILHOG_UI_PORT=8025
 #MAILHOG_SMTP_PORT=1025

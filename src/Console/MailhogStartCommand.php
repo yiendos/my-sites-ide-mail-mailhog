@@ -20,7 +20,7 @@ class MailhogStartCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('servers:mailhog-start')
+            ->setName('mail:mailhog-start')
             ->setDescription('Start the MailHog container - or recreate it if its compose config changed')
         ;
     }

@@ -20,13 +20,13 @@ class MailhogStopCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('servers:mailhog-stop')
+            ->setName('mail:mailhog-stop')
             ->setDescription('Stop the MailHog container, leaving the rest of the IDE running')
         ;
     }
 
     /**
-     * Stopped rather than removed, so servers:mailhog-start brings back the
+     * Stopped rather than removed, so mail:mailhog-start brings back the
      * same container. The next ide:spark starts it again (autostart). Mail
      * is kept in memory, so stopping empties the inbox.
      *
